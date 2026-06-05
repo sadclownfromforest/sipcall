@@ -45,7 +45,10 @@ sip_invite(Req, _Call) ->
                     Contact = nksip_sipmsg:get_meta(contacts, Req),
                     io:format("phone saved ~p~n", [Contact]),
                     One_contact = hd(Contact),
-                    ets:insert(clients_uri, {FromUser, One_contact}),
+		    Ip = element(5, One_contact),
+		    Port = element(6, One_contact),
+		    URI = "sip:" ++ binary_to_list(FromUser) ++ "@" ++ binary_to_list(Ip) ++ ":" ++ integer_to_list(Port),
+                    ets:insert(clients_uri, {FromUser, URI}),
                     io:format("ets: ~p~n", [ets:tab2list(clients_uri)]),
                     {reply, {487, []}};
                 false ->
